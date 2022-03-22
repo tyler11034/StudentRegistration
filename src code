@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+
+namespace Student_Registration
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+            Load();
+        }
+        
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+        
+        MySqlConnection con = new MySqlConnection("server=localhost;user=root;database=studentregistration;port=3306;password=Qazwsx1357997531!");
+        //SqlConnection con = new SqlConnection("Data Source = InnoDB; Initial Catalog=studentregistration; User IS=root; Password=Qazwsx1357997531!");
+        MySqlCommand cmd;
+        MySqlDataReader read;
+        MySqlDataAdapter drr;
+        string id;
+        bool Mode = true;
+        string mysql;
+
+
+
+
+
+
+        public void Load()
+        {
+            try
+            {
+                mysql = "select * from student";
+                cmd = new MySqlCommand(mysql, con);
+                con.Open();
+
+                read = cmd.ExecuteReader();          
+                dataGridView1.Rows.Clear();
+
+                while(read.Read())
+                {
+                    dataGridView1.Rows.Add(read[0],read[1],read[2],read[3]);
+                }
+                
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                con.Close();
+            }
+
+        }
+
+        // if mode is true add records else update the record
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string name = txtName.Text;
+            string course = txtCourse.Text;
+            string fee = txtFee.Text;
+
+            if(Mode == true)
+            {
+                mysql = "insert into studentregistration.student(stname,course, fee) values(@stname,@course,@fee)";
+                con.Open();
+                cmd = new MySqlCommand(mysql, con);
+                cmd.Parameters.AddWithValue("@stname", name);
+                cmd.Parameters.AddWithValue("@course", course);
+                cmd.Parameters.AddWithValue("@fee", fee);
+                MessageBox.Show("Record Added");
+                cmd.ExecuteNonQuery();
+
+                txtName.Clear();
+                txtCourse.Clear();
+                txtFee.Clear();
+                txtName.Focus();
+
+            }
+            else
+            {
+
+            }
+            con.Close();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+    }
+}
